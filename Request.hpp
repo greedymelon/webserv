@@ -1,22 +1,20 @@
 #ifndef REQUEST_HPP
 # define REQUEST_HPP
 # include <string>
+# include <iostream>
+# include <fstream>
 
 class Request
 {
     
         private:
 		    Request(void );
-            std::string head; 
-            std::string body;
-
+            std::ifstream _request;
         public:
-            Request( std::string head, std::string body);
+            Request(std::ifstream  fd);
 		    ~Request( void );
-            const std::string get_head() const;
-            const std::string get_body() const;
+            std::ifstream get_fd() const;
 };
-
 
 
 
