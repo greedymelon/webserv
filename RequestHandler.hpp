@@ -8,12 +8,17 @@
 class RequestHandler
 {
     private:
-        Request &_client;
+        Request &_clientRequest;
         Response *_response;
-        Configuration &_data;
+        Configuration &_conf;
+        std::string _protocol;
+        std::string _connection;
+        std::string _host;
+        const char *_page;
         int _method;
         void parse_header();
-        void set_method();
+        void set_method(std::string first_line);
+        void set_page(std::string first_line);
         void set_get();
         void set_post();
         void set_delete();
@@ -22,12 +27,19 @@ class RequestHandler
         void set_response();
 
     public:
-        RequestHandler(Configuration &data, Request &client);
+        RequestHandler(Configuration &data, Request &request);
         ~RequestHandler();
         Response *get_response() const;
 };
 
-
+typedef enum e_request_type
+{
+    GET,
+    POST,
+    DELETE,
+    METHOD_NOT_ALLOW,
+    WRONG_PROTOCOL,
+} t_request_type;
 
 
 #endif
