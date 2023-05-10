@@ -3,17 +3,35 @@
 # include <string>
 # include <iostream>
 # include <fstream>
+# include <map>
 
 class Request
 {
     
         private:
-		    Request(void );
-            std::ifstream _request;
+            bool _is_header_finish;
+            std::string _buffer;
+
+            int         _method;
+            std::string _address;
+            std::string _protocol;
+            std::map<std::string, std::string> header;
+            std::string _body;
+
+            int set_method(void);
+            void set_address(void);
+            int set_protocol(void);
+            void set_map(void);
+            int set_body(void);
         public:
-            Request(std::ifstream  fd);
+            Request(void);
 		    ~Request( void );
-            std::ifstream get_fd() const;
+            int feed(std::string chunk);
+            std::string get_address(void);
+            std::string get_info(std::string info);
+            int get_method(void);
+            std::string get_prothocol(void);
+
 };
 
 

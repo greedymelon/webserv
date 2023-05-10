@@ -5,14 +5,15 @@
 class Response
 {
     private:
-        std::string *_head;
-        std::string *_body;
+        std::string _response;
     public:
         Response(void);
+        Response(int error);
         ~Response (void);
-        void   set_head(std::string head);
-        void    set_body(std::string head);
-        std::string get_head(void) const;
-        std::string get_body(void) const;
+        std::string get_response(void) const;
+        void set_response(int error);
+        void set_responce(std::string response);
+
+
 };
 #endif
