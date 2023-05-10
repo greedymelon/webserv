@@ -9,18 +9,18 @@ class Request
 {
     
         private:
-            bool _is_header_finish;
+            bool    _is_header_finish;
+            bool    _is_first_line;
             std::string _buffer;
 
             int         _method;
             std::string _address;
             std::string _protocol;
-            std::map<std::string, std::string> header;
+            std::map<std::string, std::string> _header;
             std::string _body;
 
-            int set_method(void);
-            void set_address(void);
-            int set_protocol(void);
+            int set_MetAddProt(void);
+            int parse_protocol(void);
             void set_map(void);
             int set_body(void);
         public:
