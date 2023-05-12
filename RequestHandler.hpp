@@ -32,14 +32,5 @@ class RequestHandler
         Response *get_response() const;
 };
 
-typedef enum e_request_type
-{
-    GET,
-    POST,
-    DELETE,
-    METHOD_NOT_ALLOW = 405,
-    WRONG_PROTOCOL,
-} t_request_type;
-
 
 #endif
