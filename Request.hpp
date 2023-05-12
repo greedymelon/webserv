@@ -32,7 +32,9 @@ class Request
             std::string get_info(std::string key) const;
             bool is_info_present(std::string key) const;
             int get_method(void) const;
-            std::string get_protocol(void);
+            std::string get_protocol(void) const;
+            std::string get_body(void) const;
+
 };
 
 typedef enum e_request_type

@@ -7,11 +7,11 @@ Request::~Request(void){}
 
 int st_select_method(std::string method)
 {
-    if (method.compare("GET"))
+    if (method.compare(0, 3, "GET") == 0)
         return GET;
-    if (method.compare("POST"))
+    if (method.compare(0, 4, "POST") == 0)
         return POST;
-    if (method.compare("DELETE"))
+    if (method.compare(0, 6, "DELETE") == 0)
         return DELETE;
     return METHOD_NOT_ALLOW;
 }
@@ -36,6 +36,8 @@ int  Request::parse_protocol(void)
     if (_buffer.find_first_of("HTTP/1.1")  == std::string::npos)
         return WRONG_PROTOCOL;
     _protocol = "HTTP/1.1";
+    _buffer.erase(0, _buffer.find_first_of('\n') + 1);
+    _is_first_line = 1;
     return 0;
 }
 
@@ -54,10 +56,11 @@ int  Request::set_MetAddProt(void)
 
 void Request::set_map(void)
 {
+     _is_header_finish = 0;
     if (_buffer.find_first_of('\n') == std::string::npos)
         return ;
     std::string value;
-    while (_buffer.find_first_of("\r\n") != 0 || _buffer.find_first_of('\n') != 0)
+    while (_buffer.find_first_of("\r\n") != 0 && _buffer.find_first_of('\n') != 0)
     {
         std::string key = _buffer.substr(0, _buffer.find_first_of(':'));
         _buffer.erase(0,_buffer.find_first_of(':') + 2);
@@ -65,7 +68,7 @@ void Request::set_map(void)
             value = _buffer.substr(0, _buffer.find_first_of("\r\n"));
         else
             value = _buffer.substr(0, _buffer.find_first_of('\n'));
-         _buffer.erase(0,_buffer.find_first_of('\n') + 1);
+        _buffer.erase(0,_buffer.find_first_of('\n') + 1);
         _header[key] =  value;
         if (_buffer.find_first_of('\n') == std::string::npos)
             return ;
@@ -105,13 +108,19 @@ bool  Request::is_info_present(std::string key) const
     if ( _header.find(key) == _header.end())
         return false;
     return true;
+
 }
 
 int Request::get_method(void) const
 {
     return _method;
 }
-std::string Request::get_protocol(void)
+std::string Request::get_protocol(void) const
 {
     return _protocol;
+}
+
+std::string Request::get_body(void) const
+{
+    return _body;
 }

@@ -8,15 +8,16 @@
 class RequestHandler
 {
     private:
-            Request &_clientRequest;
-            Response *_response;
+            Request *_clientRequest;
+            Response _response;
             Configuration &_conf;
-            
+
 
     public:
-        RequestHandler(Configuration &data, Request &request);
+        RequestHandler(Configuration &data, Request *request);
+        RequestHandler(Configuration &data, int error);
         ~RequestHandler();
-        Response *get_response() const;
+        Response get_response() const;
 };
 
 

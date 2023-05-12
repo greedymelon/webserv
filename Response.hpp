@@ -5,14 +5,13 @@
 class Response
 {
     private:
-        std::string _response;
+        std::string *_response;
     public:
         Response(void);
-        Response(int error);
         ~Response (void);
-        std::string get_response(void) const;
-        void set_response(int error);
-        void set_response(std::string response);
+        std::string *get_response(void) const;
+        void set_response(std::string *response);
+        void set_error(int error);
 
 
 };
