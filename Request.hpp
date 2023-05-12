@@ -32,8 +32,7 @@ class Request
             std::string get_info(std::string key) const;
             bool is_info_present(std::string key) const;
             int get_method(void) const;
-            std::string get_prothocol(void);
-
+            std::string get_protocol(void);
 };
 
 typedef enum e_request_type
@@ -42,7 +41,7 @@ typedef enum e_request_type
     POST,
     DELETE,
     METHOD_NOT_ALLOW = 405,
-    WRONG_PROTOCOL = ,
+    WRONG_PROTOCOL = 505,
 } t_request_type;
 
 #endif

@@ -8,23 +8,10 @@
 class RequestHandler
 {
     private:
-        Request &_clientRequest;
-        Response *_response;
-        Configuration &_conf;
-        std::string _protocol;
-        std::string _connection;
-        std::string _host;
-        const char *_page;
-        int _method;
-        void parse_header();
-        void set_method(std::string first_line);
-        void set_page(std::string first_line);
-        void set_get();
-        void set_post();
-        void set_delete();
-        void set_error();
-        int read_requestHead() const;
-        void set_response();
+            Request &_clientRequest;
+            Response *_response;
+            Configuration &_conf;
+            
 
     public:
         RequestHandler(Configuration &data, Request &request);

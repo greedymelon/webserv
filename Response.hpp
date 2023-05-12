@@ -1,5 +1,5 @@
 #ifndef RESPONSE_HPP
-# define RESPONCE_HPP
+# define RESPONSE_HPP
 # include <string>
 
 class Response
@@ -12,7 +12,7 @@ class Response
         ~Response (void);
         std::string get_response(void) const;
         void set_response(int error);
-        void set_responce(std::string response);
+        void set_response(std::string response);
 
 
 };

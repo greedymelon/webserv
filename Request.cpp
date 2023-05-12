@@ -34,6 +34,7 @@ int  Request::parse_protocol(void)
 {
     if (_buffer.find_first_of("HTTP/1.1")  == std::string::npos)
         return WRONG_PROTOCOL;
+    _protocol = "HTTP/1.1";
 }
 
 int  Request::set_MetAddProt(void)
@@ -94,5 +95,22 @@ std::string Request::get_address(void) const
 
 std::string Request::get_info(std::string key) const
 {
-    return _header[key];
+    return _header.find(key)->second;
+}
+
+bool  Request::is_info_present(std::string key) const
+{
+    if ( _header.find(key) == _header.end())
+        return false;
+    return true;
+
+}
+
+int Request::get_method(void) const
+{
+    return _method;
+}
+std::string Request::get_protocol(void)
+{
+    return _protocol;
 }
