@@ -7,11 +7,11 @@ Request::~Request(void){}
 
 int st_select_method(std::string method)
 {
-    if (method.compare(0, 3, "GET") == 0)
+    if (method.compare("GET") == 0)
         return GET;
-    if (method.compare(0, 4, "POST") == 0)
+    if (method.compare("POST") == 0)
         return POST;
-    if (method.compare(0, 6, "DELETE") == 0)
+    if (method.compare("DELETE") == 0)
         return DELETE;
     return METHOD_NOT_ALLOW;
 }
