@@ -14,7 +14,9 @@ class Request
             std::string _buffer;
 
             int         _method;
-            std::string _address;
+            bool        _is_cgi;
+            std::string _cgi;
+            std::string _uri;
             std::string _protocol;
             std::map<std::string, std::string> _header;
             std::string _body;
@@ -28,12 +30,16 @@ class Request
             Request(void);
 		    ~Request( void );
             int feed(std::string chunk);
-            std::string get_address(void) const;
+            std::string get_uri(void) const;
             std::string get_info(std::string key) const;
             bool is_info_present(std::string key) const;
             int get_method(void) const;
             std::string get_protocol(void) const;
             std::string get_body(void) const;
+            std::string get_cgi(void) const;
+            bool is_cgi(void) const;
+
+};
 
 };
 
