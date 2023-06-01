@@ -1,7 +1,7 @@
 #include "Request.hpp"
 
 
-Request::Request(void):_method(0),_is_first_line(0), _is_header_finish(0){}
+Request::Request(void): _is_header_finish(0), _is_first_line(0), _method(0){}
 Request::~Request(void){}
 
 
@@ -26,7 +26,7 @@ int Request::set_body(void)
     _buffer.clear();
     // if (_body.size() > conf.maxbodysie)
     //     return (413);
-    if (_body.size() > atol(get_info("Content-Lenght").c_str()))
+    if (_body.size() > (unsigned long)atol(get_info("Content-Lenght").c_str()))
         return (400);
     return 0;
 }
