@@ -5,10 +5,10 @@ int main()
 {
     Request request;
 
-    if (request.feed("POST /hello.htm HTTP/1.1\n") == 0)
+    if (request.feed("POST /hello.html HTTP/1.1\n") == 0)
     {   
         std::cout<<"method num: " << request.get_method(); 
-        std::cout << " address: " << request.get_address();
+        std::cout << " address: " << request.get_uri();
         std::cout << " protocol: " << request.get_protocol() << std::endl;
     }
     else
@@ -32,6 +32,21 @@ int main()
     else
     {
         std::cout<< request.feed("\n bodydssdsdsdsd") << std::endl;
+    }
+
+    Request request2;
+
+    if (request2.feed("POST /hello.py?abc=123&xyz=987 HTTP/1.1\n") == 0)
+    {   
+
+        std::cout<<"method num: " << request2.get_method() << std::endl; 
+        std::cout << "address: " << request2.get_uri() << std::endl;
+        std::cout<<"is sgi: " << request2.is_cgi()<< std::endl;
+        if ( request2.is_cgi())
+            std::cout<<"cgi: " << request2.get_cgi() << std::endl;
+        else
+            std::cout<< "no cgi " << std::endl;
+        std::cout << "protocol: " << request2.get_protocol() << std::endl;
     }
 
 }

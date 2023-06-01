@@ -49,7 +49,15 @@ int  Request::set_MetAddProt(void)
     if (_method == METHOD_NOT_ALLOW)
         return 405;
     _buffer.erase(0, _buffer.find_first_of(' ') + 1);
-    _address = _buffer.substr(0, _buffer.find_first_of(' '));
+    _uri = _buffer.substr(0, _buffer.find_first_of(' '));
+    _is_cgi = true;
+    if (_uri.find('?') == std::string::npos)
+        _is_cgi = false;
+    if (_is_cgi)
+    {    
+        _cgi = _uri.substr(_uri.find('?'), _uri.length());
+        _uri = _uri.substr(0, _uri.find('?'));
+    }
     _buffer.erase(0, _buffer.find_first_of(' ') + 1);
     return parse_protocol();
 }
@@ -93,9 +101,9 @@ int Request::feed(std::string chunk)
     return result ;
 }
 
-std::string Request::get_address(void) const
+std::string Request::get_uri(void) const
 {
-    return _address;
+    return _uri;
 }
 
 std::string Request::get_info(std::string key) const
@@ -123,4 +131,14 @@ std::string Request::get_protocol(void) const
 std::string Request::get_body(void) const
 {
     return _body;
+}
+
+std::string Request::get_cgi(void) const
+{
+    return _cgi;
+}
+
+bool Request::is_cgi(void) const
+{
+    return _is_cgi;
 }

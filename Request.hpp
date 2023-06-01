@@ -41,7 +41,6 @@ class Request
 
 };
 
-};
 
 typedef enum e_request_type
 {
