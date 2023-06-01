@@ -33,12 +33,12 @@ int main()
     {
         std::cout<< request.feed("\n bodydssdsdsdsd") << std::endl;
     }
+    
 
     Request request2;
-
+    
     if (request2.feed("POST /hello.py?abc=123&xyz=987 HTTP/1.1\n") == 0)
     {   
-
         std::cout<<"method num: " << request2.get_method() << std::endl; 
         std::cout << "address: " << request2.get_uri() << std::endl;
         std::cout<<"is sgi: " << request2.is_cgi()<< std::endl;
