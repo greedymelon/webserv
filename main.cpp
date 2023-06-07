@@ -53,10 +53,12 @@ int main()
         std::cout << "protocol: " << request2.get_protocol() << std::endl;
     }
     //CgiHandler cgi;
-    //pipe
+    //if not Get
+    //      pipe
     //child
-    //dup ();
-    ///execve(conf.fake(), request.get_uri().c_str(), request.get_info().c_str());
+    //if not Get
+    //      dup ();
+    ///execve(scripttype path, request.get_uri().c_str(), request.get_info().c_str());
     //parent
     //write (fd, request.get_body(), request.get_bodySize())
     //close fd
