@@ -1,9 +1,13 @@
 #include "Request.hpp"
+#include "CgiHandler.hpp"
 #include <iostream>
-
+#include <stdlib.h>
+#include <unistd.h>
 int main()
 {
     Request request;
+    Configuration conf;
+    conf.add("imageloead.py");
 
     if (request.feed("POST /hello.html HTTP/1.1\n") == 0)
     {   
@@ -48,5 +52,15 @@ int main()
             std::cout<< "no cgi " << std::endl;
         std::cout << "protocol: " << request2.get_protocol() << std::endl;
     }
+    //CgiHandler cgi;
+    //pipe
+    //child
+    //dup ();
+    ///execve(conf.fake(), request.get_uri().c_str(), request.get_info().c_str());
+    //parent
+    //write (fd, request.get_body(), request.get_bodySize())
+    //close fd
+    //read(std,buffer,30);
+    //cgi.feed(buffer);
 
 }

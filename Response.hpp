@@ -7,7 +7,7 @@ class Response
     private:
         std::string *_response;
     public:
-        Response(void);
+        Response();
         ~Response (void);
         std::string *get_response(void) const;
         void set_response(std::string *response);

@@ -8,7 +8,7 @@ class Configuration
 
         Configuration (void);
         ~Configuration(void);
-        std::string fake;
+        std::string fake ;
 };
 
 #endif

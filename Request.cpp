@@ -4,6 +4,41 @@
 Request::Request(void): _is_header_finish(0), _is_first_line(0), _method(0){}
 Request::~Request(void){}
 
+static char **st_createArgv(std::map<std::string, std::string> _header)
+{
+    COMSPEC=
+    DOCUMENT_ROOT=
+    GATEWAY_INTERFACE=
+    HOME=
+    HTTP_ACCEPT=
+    HTTP_ACCEPT_CHARSET=
+    HTTP_ACCEPT_ENCODING=
+    HTTP_ACCEPT_LANGUAGE=
+    HTTP_CONNECTION=
+    HTTP_HOST=
+    HTTP_USER_AGENT=
+    PATH=""
+    PATHEXT=""
+    PATH_INFO=
+    PATH_TRANSLATED=
+    QUERY_STRING=
+    REMOTE_ADDR=
+    REMOTE_PORT=
+    REQUEST_METHOD=
+    REQUEST_URI=
+    SCRIPT_FILENAME=
+    SCRIPT_NAME=
+    SERVER_ADDR=
+    SERVER_ADMIN=""
+    SERVER_NAME=
+    SERVER_PORT=
+    SERVER_PROTOCOL="HTTP/1.1"
+    SERVER_SIGNATURE=
+    SERVER_SOFTWARE=
+    SYSTEMROOT=
+    TERM=
+    WINDIR=
+}
 
 int st_select_method(std::string method)
 {
@@ -88,7 +123,7 @@ void Request::set_map(void)
         _buffer.erase(0, 2);
 }
 
-int Request::feed(std::string chunk)
+int Request::feed(const char *chunk)
 {
     int result = 0;
     _buffer.append(chunk);
@@ -128,14 +163,20 @@ std::string Request::get_protocol(void) const
     return _protocol;
 }
 
-std::string Request::get_body(void) const
+const char *Request::get_body(void) const
 {
-    return _body;
+    return _body.c_str();
 }
 
-std::string Request::get_cgi(void) const
+
+size_t Request::get_bodySize(void) const
 {
-    return _cgi;
+    return _body.length();
+}
+
+char *const *Request::get_argv(void) const
+{
+    return (st_createArgv(_header))
 }
 
 bool Request::is_cgi(void) const

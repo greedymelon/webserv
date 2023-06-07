@@ -29,15 +29,16 @@ class Request
         public:
             Request(void);
 		    ~Request( void );
-            int feed(std::string chunk);
+            int         feed(const char* chunk);
             std::string get_uri(void) const;
             std::string get_info(std::string key) const;
-            bool is_info_present(std::string key) const;
-            int get_method(void) const;
+            bool        is_info_present(std::string key) const;
+            int         get_method(void) const;
             std::string get_protocol(void) const;
-            std::string get_body(void) const;
-            std::string get_cgi(void) const;
-            bool is_cgi(void) const;
+            const char  *get_body(void) const;
+            size_t      get_bodySize(void);
+            char *const *get_argv(void) const;
+            bool        is_cgi(void) const;
 
 };
 
