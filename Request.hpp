@@ -15,7 +15,7 @@ class Request
 
             std::string      _method;
             bool        _is_cgi;
-            char **argv;
+            char **_argv;
             std::string _cgi;
             std::string _uri;
             std::string _protocol;
@@ -26,7 +26,7 @@ class Request
             int parse_protocol(void);
             void set_map(void);
             int set_body(void);
-            void create_argv(void);
+            
             
         public:
             Request(void);
@@ -38,7 +38,9 @@ class Request
             int         get_method(void) const;
             std::string get_protocol(void) const;
             const char  *get_body(void) const;
-            size_t      get_bodySize(void);
+            size_t      get_bodySize(void) const;
+            void create_argv(void);
+
             char *const *get_argv(void) const;
             bool        is_cgi(void) const;
 

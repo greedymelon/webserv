@@ -6,7 +6,7 @@ OBJDIR		= obj
 #SRCDIR		= src
 
 FILES	=	main.cpp \
-			Request.cpp \
+			Request.cpp 
 
 OBJ			= ${FILES:%.cpp=${OBJDIR}/%.o}
 
