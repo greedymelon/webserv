@@ -13,8 +13,9 @@ class Request
             bool    _is_first_line;
             std::string _buffer;
 
-            int         _method;
+            std::string      _method;
             bool        _is_cgi;
+            char **argv;
             std::string _cgi;
             std::string _uri;
             std::string _protocol;
@@ -25,6 +26,7 @@ class Request
             int parse_protocol(void);
             void set_map(void);
             int set_body(void);
+            void create_argv(void);
             
         public:
             Request(void);
