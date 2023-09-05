@@ -104,19 +104,32 @@ int  Request::set_MetAddProt(void)
 void Request::set_map(void)
 {
      _is_header_finish = 0;
+    // check if there some value in the string
     if (_buffer.find_first_of('\n') == std::string::npos)
         return ;
     std::string value;
-    while (_buffer.find_first_of("\r\n") != 0 && _buffer.find_first_of('\n') != 0)
+
+    while (_buffer.find_first_of('\n') != 0)
     {
-        std::string key = _buffer.substr(0, _buffer.find_first_of(':'));
+        //checking if part of previus key
+        while (_buffer.find_first_of(':') == std::string::npos || _buffer.find_first_of(':') > _buffer.find_first_of('\n'))
+        {
+            value = _buffer.substr(_buffer.find_first_not_of(" \t"), _buffer.find_first_of("\r\n"));
+                _buffer.erase(0 ,_buffer.find_first_of('\n') + 1);
+                if((_header[ _last_key]).find_last_of(',') != (_header[ _last_key]).length())
+                _header[ _last_key].append(", ");
+            _header[ _last_key].append(value);
+        }
+        if (_buffer.find_first_of('\n') != 0)
+            break ;
+        _last_key = _buffer.substr(0, _buffer.find_first_of(':'));
         _buffer.erase(0,_buffer.find_first_of(':') + 2);
         if (_buffer.find_first_of("\r\n") != std::string::npos)
             value = _buffer.substr(0, _buffer.find_first_of("\r\n"));
         else
-            value = _buffer.substr(0, _buffer.find_first_of('\n'));
+            value = _buffer.substr(_buffer.find_first_not_of(" \t"), _buffer.find_first_of('\n'));
         _buffer.erase(0,_buffer.find_first_of('\n') + 1);
-        _header[key] =  value;
+        _header[ _last_key] =  value;
         if (_buffer.find_first_of('\n') == std::string::npos)
             return ;
     }

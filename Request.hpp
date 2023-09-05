@@ -12,6 +12,7 @@ class Request
             bool    _is_header_finish;
             bool    _is_first_line;
             std::string _buffer;
+            std::string _last_key;
 
             std::string      _method;
             bool        _is_cgi;
