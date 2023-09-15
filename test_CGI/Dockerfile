@@ -18,7 +18,5 @@ COPY ./script.sh .
 RUN mkdir /var/www/images && chown -R www-data:www-data /var/www/ \
     && chmod 777 /var/www/cgi-bin && chmod 777 /var/www/cgi-bin/test.sh && chmod 777 /var/www/cgi-bin/upload.py\
     && dos2unix /var/www/cgi-bin/upload.py && dos2unix /var/www/cgi-bin/test.sh
-
-EXPOSE 443
     
 ENTRYPOINT [ "bash", "script.sh" ]
