@@ -74,6 +74,7 @@ def base_page(message="none", type=0):
             print ("<form enctype = \"multipart/form-data\" action = \"/cgi-bin/upload.py\" method = \"post\">")
             print ("<input type=\"hidden\" name=\"delete\" value=\"" + file + "\">")
             print ("<input type = \"submit\" value = \"delete\" />")
+            print ("</form>")
             print ('</div>')
         print ('</div>')
     print (base_end)
