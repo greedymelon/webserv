@@ -38,7 +38,7 @@
 //     "WINDIR="
 // };
 
-Request::Request(void): _is_header_finish(0), _is_first_line(0),_env(NULL){}
+Request::Request(void): _is_header_finish(0), _is_first_line(0),_env(NULL), _max_body_size(0){}
 Request::~Request(void){
     if (_env == NULL)
         return ;
@@ -63,13 +63,9 @@ int Request::set_body(void)
 {
     if (_method.compare("GET") == 0)
         return (400);
-    if ( _header.find("Content-Lenght") == _header.end())
-        return (401);
     _body.append(_buffer);
     _buffer.clear();
-    // if (_body.size() > conf.maxbodysie)
-    //     return (413);
-    if (_body.size() > (unsigned long)atol(get_info("Content-Lenght").c_str()))
+    if (_body.size() > _max_body_size)
         return (400);
     return 0;
 }
@@ -102,12 +98,6 @@ int  Request::set_MetAddProt(void)
         _query_string = _uri.substr(_uri.find('?'), _uri.length());
         _script_name = _uri.substr(0, _uri.find('?'));
     }
-
-    // if (_is_cgi)
-    // {    
-    //     _cgi = _uri.substr(_uri.find('?'), _uri.length());
-    //     _uri = _uri.substr(0, _uri.find('?'));
-    // }
     _buffer.erase(0, _buffer.find_first_of(' ') + 1);
     return parse_protocol();
 }
@@ -159,6 +149,17 @@ int Request::feed(const char *chunk)
         result = set_MetAddProt();
     if (_is_first_line && !_is_header_finish && !result)
         set_map();
+    if (_is_header_finish && _max_body_size == 0)
+    {   
+        _max_body_size = 66666666;
+        if (_header.find("Transfer-Encoding") == _header.end())
+        { 
+            if (_header.find("Content-Lenght") == _header.end() || stoi(_header["Content-Lenght"]) < 0 )
+                return (401);
+            else if (_max_body_size > unsigned(stoi(_header["Content-Lenght"])))
+                _max_body_size = stoi(_header["Content-Lenght"]); 
+        }
+    }
     if (_is_first_line && _is_header_finish && !result)
         return (set_body());
     return result ;

@@ -3,8 +3,6 @@
 # include <string>
 # include <vector>
 # include "Request.hpp"
-# include "Configuration.hpp"
-# include "Response.hpp"
 
 class CgiHandler
 {
@@ -14,8 +12,8 @@ class CgiHandler
         int _fd_err[2];
         int _response_num;
         pid_t _child_id;
-        std::string _body;
-        std::string _body_err;
+        std::string _response;
+        std::string _response_err;
         std::string _err;
         int initialize_pipe(void);
         void child_exe(const char *script, char * const *env);

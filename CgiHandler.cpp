@@ -52,28 +52,33 @@ void CgiHandler::parent_exe(const char *body)
    char buffer[100];
    while (read(_fd_out[0], buffer, 100) > 0)
    {
-      _body.append(buffer);
+      _response.append(buffer);
       memset(buffer, '\0', 100);
    }
    close (_fd_out[0]);
    while (read(_fd_err[0], buffer, 100) > 0)
    {
-      _body_err.append(buffer);
+      _response_err.append(buffer);
       memset(buffer, '\0', 100);
    }
    close (_fd_err[0]);
    int *status = NULL;
-   waitpid(pid, status);
+   wait(status);
    if (status)
    {
       if (*status == 137)
+      {  
          _response_num = 137;
+         _err = "child was killed";
+      }
       else
       {  
          _response_num = 500;
-         _err = strerror(errno);
+         _err = strerror(*status);
       }
    }
+   else
+       _response_num = 200;
 }
 
 void CgiHandler::child_exe(const char *script, char * const *env)
@@ -105,7 +110,10 @@ void CgiHandler::child_exe(const char *script, char * const *env)
    close(_fd_err[1]);
    
    execve(script, argv, env);
-   exit (errno);
+   int error = errno;
+   close(STDIN_FILENO);
+   st_close_fd(STDOUT_FILENO, STDERR_FILENO);
+   exit (error);
 }
 
 
@@ -142,5 +150,5 @@ int CgiHandler::get_response_num() const
 
 std::string CgiHandler::get_response() const
 {
-   return _body;
+   return _response;
 }

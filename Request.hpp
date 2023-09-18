@@ -17,11 +17,14 @@ class Request
             std::string _method;
             bool        _is_cgi;
             char        **_env;
+
+        
+            std::map<std::string, std::string> _header;
             std::string _query_string;
+            unsigned int     _max_body_size;
             std::string _uri;
             std::string _script_name;
             std::string _protocol;
-            std::map<std::string, std::string> _header;
             std::string _body;
 
             int set_MetAddProt(void);
