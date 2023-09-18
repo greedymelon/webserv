@@ -5,14 +5,12 @@ import cgitb; cgitb.enable()
 import os
 import random
 import string
-import sys
-import errno
 
 print("Content-type:text/html\r\n\r\n", end="")
 
 dir_path = "/var/www/images/"
 files = os.listdir(dir_path)
-
+form = cgi.FieldStorage()
 base_begin = """
 <!DOCTYPE html>
 <html lang="en">
@@ -80,14 +78,17 @@ def base_page(message="none", type=0):
     print (base_end)
 
 def upload_image():
-    form = cgi.FieldStorage()
     if "delete" in form:
-        delete_image(form)
+        delete_image()
         return
     if "fileName" not in form:
         base_page("You need to provide a file to upload a file", 1)
-        return 
-    filename = str(form["fileName"].filename) 
+        return
+    try:
+        filename = str(form["fileName"].filename)
+    except:
+        base_page("You need to provide a file to upload a filed", 1)
+        return   
     if '.png' == filename[-4:] or '.jpeg' == filename[-5:]:
         temp_pathname = dir_path + filename
         while True:
@@ -97,26 +98,28 @@ def upload_image():
             else:
                 break
       
-        fileitem = form["fileName"]
-        open(temp_pathname, "wb").write(fileitem.file.read())
+        open(temp_pathname, "wb").write(fileitem.read())
         base_page(filename + " was uploaded successfully")
     else:
-        base_page("Wrong format" + filename, 1)
+        base_page("Wrong format " + filename, 1)
 
-def delete_image(form):
-    if not form["delete"].value:
+def delete_image():
+    try:
+        "delete" in form
+        filename = form["delete"].value
+    except:
         base_page("You need to provide a file to delete", 1)
         return
-    filename = str(form["delete"].value)
-    try:
-        temp_pathname = dir_path + filename
-        os.path.exists(temp_pathname)
+
+    temp_pathname = dir_path + filename
+    if os.path.exists(temp_pathname):
         os.remove( temp_pathname)
         base_page(filename + " was correctly deleted")
-    except FileExistsError:
+    else:
         base_page("The file you want to delete does not exist", 1)
           
 method_map = {"GET": base_page,
 "POST": upload_image,
+"DELETE" : delete_image,
 }
 method_map[os.environ['REQUEST_METHOD']]()
