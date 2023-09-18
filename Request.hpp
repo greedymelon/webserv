@@ -14,11 +14,12 @@ class Request
             std::string _buffer;
             std::string _last_key;
 
-            std::string      _method;
+            std::string _method;
             bool        _is_cgi;
-            char **_argv;
-            std::string _cgi;
+            char        **_env;
+            std::string _query_string;
             std::string _uri;
+            std::string _script_name;
             std::string _protocol;
             std::map<std::string, std::string> _header;
             std::string _body;
@@ -40,10 +41,11 @@ class Request
             std::string get_protocol(void) const;
             const char  *get_body(void) const;
             size_t      get_bodySize(void) const;
-            void create_argv(void);
+            void        create_env(void);
 
-            char *const *get_argv(void) const;
+            char *const *get_env(void) const;
             bool        is_cgi(void) const;
+            const char *get_script_addr(void) const;
 
 };
 

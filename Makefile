@@ -1,12 +1,13 @@
 NAME = webserv
 CC = c++
-CFLAGS = -Wall -Wextra -Werror 
+CFLAGS = -Wall -Wextra -Werror -Wzero-as-null-pointer-constant
 RM			= rm -f -r
 OBJDIR		= obj
 #SRCDIR		= src
 
 FILES	=	main.cpp \
-			Request.cpp 
+			Request.cpp \
+			CgiHandler.cpp
 
 OBJ			= ${FILES:%.cpp=${OBJDIR}/%.o}
 

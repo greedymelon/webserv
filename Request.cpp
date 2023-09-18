@@ -1,4 +1,6 @@
 #include "Request.hpp"
+#include <string.h>
+#include <stdlib.h>
 
 // const char *param[] =
 // {
@@ -36,11 +38,13 @@
 //     "WINDIR="
 // };
 
-Request::Request(void): _is_header_finish(0), _is_first_line(0), _method(0), _argv(NULL){}
+Request::Request(void): _is_header_finish(0), _is_first_line(0),_env(NULL){}
 Request::~Request(void){
-    for (int i = 0; _argv[i]; i++)
-        free(_argv[i]);
-    free(*_argv);
+    if (_env == NULL)
+        return ;
+    for (int i = 0; i < 33; i++)
+        free(_env[i]);
+    free(_env);
 }
 
 
@@ -88,15 +92,22 @@ int  Request::set_MetAddProt(void)
     if (st_check_method(_method) == METHOD_NOT_ALLOW)
         return 405;
     _buffer.erase(0, _buffer.find_first_of(' ') + 1);
+    std::cout << _buffer<< std::endl << std::endl;
     _uri = _buffer.substr(0, _buffer.find_first_of(' '));
+    _script_name = _uri;
+    _query_string = "";
     _is_cgi = true;
-    if (_uri.find('?') == std::string::npos)
-        _is_cgi = false;
-    if (_is_cgi)
-    {    
-        _cgi = _uri.substr(_uri.find('?'), _uri.length());
-        _uri = _uri.substr(0, _uri.find('?'));
+    if (_uri.find('?') != std::string::npos)
+    {
+        _query_string = _uri.substr(_uri.find('?'), _uri.length());
+        _script_name = _uri.substr(0, _uri.find('?'));
     }
+
+    // if (_is_cgi)
+    // {    
+    //     _cgi = _uri.substr(_uri.find('?'), _uri.length());
+    //     _uri = _uri.substr(0, _uri.find('?'));
+    // }
     _buffer.erase(0, _buffer.find_first_of(' ') + 1);
     return parse_protocol();
 }
@@ -206,50 +217,55 @@ static char * joing_string(const char *str1, const char *str2)
     return (string);
 }
 
-void Request::create_argv(void)
+void Request::create_env(void)
 {
-    _argv = (char **)malloc(sizeof(char *) * 33);
-    _argv[32] = strdup("");
-    _argv[0] = joing_string("COMSPEC=","");
-    _argv[1] = joing_string("DOCUMENT_ROOT=","");
-    _argv[2] = joing_string("GATEWAY_INTERFACE=","");
-    _argv[3] = joing_string("HOME=","");
-    _argv[4] = joing_string("HTTP_ACCEPT=","");
-    _argv[5] = joing_string("HTTP_ACCEPT_CHARSET=","");
-    _argv[6] = joing_string("HTTP_ACCEPT_ENCODING=","");
-    _argv[7] = joing_string("HTTP_ACCEPT_LANGUAGE=","");
-    _argv[8] = joing_string("HTTP_CONNECTION=","");
-    _argv[9] = joing_string("HTTP_HOST=","");
-    _argv[10] = joing_string("HTTP_USER_AGENT=","");
-    _argv[11] = joing_string("PATH=","");
-    _argv[12] = joing_string("PATHEXT=","");
-    _argv[13] = joing_string("PATH_INFO=","");
-    _argv[14] = joing_string("PATH_TRANSLATED=","");
-    _argv[15] = joing_string("QUERY_STRING=",_cgi.c_str());
-    _argv[16] = joing_string("REMOTE_ADDR=","");
-    _argv[17] = joing_string("REMOTE_PORT=","");
-    _argv[18] = joing_string("REQUEST_METHOD=", _method.c_str());
-    _argv[19] = joing_string("REQUEST_URI=", _uri.c_str());
-    _argv[20] = joing_string("SCRIPT_FILENAME=","");
-    _argv[21] = joing_string("SCRIPT_NAME=","");
-    _argv[22] = joing_string("SERVER_ADDR=","");
-    _argv[23] = joing_string("SERVER_ADMIN=","");
-    _argv[24] = joing_string("SERVER_NAME=","");
-    _argv[25] = joing_string("SERVER_PORT=","");
-    _argv[26] = strdup("SERVER_PROTOCOL=HTTP/1.1");
-    _argv[27] = joing_string("SERVER_SIGNATURE=","");
-    _argv[28] = joing_string("SERVER_SOFTWARE=","");
-    _argv[29] = joing_string("SYSTEMROOT=","");
-    _argv[30] = joing_string("TERM=","");
-    _argv[31] = joing_string("WINDIR=","");
+    _env = (char **)malloc(sizeof(char *) * 33);
+    _env[32] = NULL;
+    _env[0] = joing_string("COMSPEC=","");
+    _env[1] = joing_string("DOCUMENT_ROOT=","");
+    _env[2] = joing_string("GATEWAY_INTERFACE=","");
+    _env[3] = joing_string("HOME=","");
+    _env[4] = joing_string("HTTP_ACCEPT=","");
+    _env[5] = joing_string("HTTP_ACCEPT_CHARSET=","");
+    _env[6] = joing_string("HTTP_ACCEPT_ENCODING=","");
+    _env[7] = joing_string("HTTP_ACCEPT_LANGUAGE=","");
+    _env[8] = joing_string("HTTP_CONNECTION=","");
+    _env[9] = joing_string("HTTP_HOST=","");
+    _env[10] = joing_string("HTTP_USER_AGENT=","");
+    _env[11] = joing_string("PATH=","");
+    _env[12] = joing_string("PATHEXT=","");
+    _env[13] = joing_string("PATH_INFO=","");
+    _env[14] = joing_string("PATH_TRANSLATED=","");
+    _env[15] = joing_string("QUERY_STRING=",_query_string.c_str());
+    _env[16] = joing_string("REMOTE_ADDR=","");
+    _env[17] = joing_string("REMOTE_PORT=","");
+    _env[18] = joing_string("REQUEST_METHOD=", _method.c_str());
+    _env[19] = joing_string("REQUEST_URI=", _uri.c_str());
+    _env[20] = joing_string("SCRIPT_FILENAME=","DOCUMENT_ROOT+filename");
+    _env[21] = joing_string("SCRIPT_NAME=",_script_name.c_str());
+    _env[22] = joing_string("SERVER_ADDR=","");
+    _env[23] = joing_string("SERVER_ADMIN=","");
+    _env[24] = joing_string("SERVER_NAME=","");
+    _env[25] = joing_string("SERVER_PORT=","");
+    _env[26] = strdup("SERVER_PROTOCOL=HTTP/1.1");
+    _env[27] = joing_string("SERVER_SIGNATURE=","");
+    _env[28] = joing_string("SERVER_SOFTWARE=","");
+    _env[29] = joing_string("SYSTEMROOT=","");
+    _env[30] = joing_string("TERM=","");
+    _env[31] = joing_string("WINDIR=","");
 }
 
-char *const *Request::get_argv(void) const
+char *const *Request::get_env(void) const
 {
-    return (_argv);
+    return (_env);
 }
 
 bool Request::is_cgi(void) const
 {
     return _is_cgi;
+}
+
+const char *Request::get_script_addr(void) const
+{
+    return _script_name.c_str();
 }
