@@ -97,8 +97,9 @@ def upload_image():
                 temp_pathname = file_dtls[0] + random.choice(string.ascii_letters) + '.' + file_dtls[1]
             else:
                 break
-      
-        open(temp_pathname, "wb").write(fileitem.read())
+
+        fileitem = form["fileName"]
+        open(temp_pathname, "wb").write(fileitem.file.read())
         base_page(filename + " was uploaded successfully")
     else:
         base_page("Wrong format " + filename, 1)
