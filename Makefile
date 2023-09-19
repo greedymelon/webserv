@@ -1,6 +1,6 @@
 NAME = webserv
 CC = c++
-CFLAGS = -Wall -Wextra -Werror -Wzero-as-null-pointer-constant
+CFLAGS = -Wall -Wextra -Werror
 RM			= rm -f -r
 OBJDIR		= obj
 #SRCDIR		= src

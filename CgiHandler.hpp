@@ -17,7 +17,7 @@ class CgiHandler
         std::string _err;
         int initialize_pipe(void);
         void child_exe(const char *script, char * const *env);
-        void parent_exe(const char *body);
+        void parent_exe(const char *body, pid_t pid);
 
     public:
         CgiHandler(const char *script, char * const *env, const char *body);
