@@ -68,10 +68,10 @@ int main()
     request3.create_env();
     std::cout<<"env: "  << std::endl;
     char *const *env =  request3.get_env();
-    for (int i =0; i < 32; i++)
-    {
-            std::cout << env[i] << std::endl;
-    }
+    // for (int i =0; i < 32; i++)
+    // {
+    //         std::cout << env[i] << std::endl;
+    // }
     std::cout<< request3.get_script_addr() << request3.get_env() << std::endl;
 
     CgiHandler cgi(request3.get_script_addr(), request3.get_env(), "delete=11111.jpeg");
