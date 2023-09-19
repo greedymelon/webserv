@@ -2,7 +2,7 @@
 #include <cstring>
 #include <sys/types.h>
 #include <sys/wait.h>
-//#include <sys/event.h>
+#include <sys/event.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <string>
@@ -59,19 +59,17 @@ void CgiHandler::parent_exe(const char *body, pid_t pid)
 	auto start = std::chrono::high_resolution_clock::now();
 	st_close_fd(_fd_in[0], _fd_out[1]);
 	close(_fd_err[1]);
-	char buffer[100];
-	int num_events;
+	int read_finished = 0;
+	int write_finished = 0;
 	while (1)
 	{
-		new_events =  kevent(kque, NULL, 0, event, 3, &timeout);
-		if (new_events == 0)
-			break ;
+		int new_events =  kevent(kque, NULL, 0, event, 3, &timeout);
 		for (int i = 0; i < num_events; i++) 
 		{
 			if (event[i].filter == EVFILT_READ) 
 			{
 				if (read(event[i].ident, buffer, 100) < 1)
-					close(event[i].ident)
+					read_finished++;
 				if (i == 1)
 					_response.append(buffer);
 				else
@@ -81,7 +79,7 @@ void CgiHandler::parent_exe(const char *body, pid_t pid)
 			if(event[i].filter == EVFILT_WRITE)
 			{
 				write(_fd_in[1], body, strlen(body));
-				close (_fd_in[1]);
+				write_finished++;
 			}	
 			auto corrent = std::chrono::high_resolution_clock::now();
 			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(corrent - start);
@@ -91,28 +89,26 @@ void CgiHandler::parent_exe(const char *body, pid_t pid)
 				break ;
 			}
 		}
-		if (allEventsProcessed())
+		if (read_finished == 2 && write_finished)
 			break ;
 	}
 	close(kque);
 	//write(_fd_in[1], body, strlen(body));
-	if (_fd_in[1] != -1)
-		close(_fd_in[1]);
+	close(_fd_in[1]);
 	//char buffer[100];
 	// while (read(_fd_out[0], buffer, 100) > 0)
 	// {
 	//    _response.append(buffer);
 	//    memset(buffer, '\0', 100);
 	// }
-	if (_fd_out[0] != -1)
-		close (_fd_out[0]);
+
+	close (_fd_out[0]);
 	// while (read(_fd_err[0], buffer, 100) > 0)
 	// {
 	//    _response_err.append(buffer);
 	//    memset(buffer, '\0', 100);
 	// }
-	if (_fd_err[0] != -1)
-		close (_fd_err[0]);
+	close (_fd_err[0]);
 	int *status = NULL;
 	wait(status);
 	if (status)
