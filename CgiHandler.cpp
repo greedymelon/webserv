@@ -60,31 +60,39 @@ void CgiHandler::parent_exe(const char *body, pid_t pid)
 	st_close_fd(_fd_in[0], _fd_out[1]);
 	close(_fd_err[1]);
 	char buffer[100];
-	int num_events = kevent(kque, NULL, 0, event, 3, &timeout);
-	for (int i = 0; i < num_events; i++) 
+	int num_events;
+	while (1)
 	{
-		if (event[i].filter == EVFILT_READ) 
-		{
-			if (read(event[i].ident, buffer, 100) < 1)
-				close(event[i].ident)
-			if (i == 1)
-				_response.append(buffer);
-			else
-				_response_err.append(buffer);
-			memset(buffer, '\0', 100);
-		}
-		if(event[i].filter == EVFILT_WRITE)
-		{
-			write(_fd_in[1], body, strlen(body));
-			close (_fd_in[1]);
-		}	
-		auto corrent = std::chrono::high_resolution_clock::now();
-		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(corrent - start);
-		if (duration.count() > MAX_TIME)
-		{
-			kill(pid, SIGKILL);
+		new_events =  kevent(kque, NULL, 0, event, 3, &timeout);
+		if (new_events == 0)
 			break ;
+		for (int i = 0; i < num_events; i++) 
+		{
+			if (event[i].filter == EVFILT_READ) 
+			{
+				if (read(event[i].ident, buffer, 100) < 1)
+					close(event[i].ident)
+				if (i == 1)
+					_response.append(buffer);
+				else
+					_response_err.append(buffer);
+				memset(buffer, '\0', 100);
+			}
+			if(event[i].filter == EVFILT_WRITE)
+			{
+				write(_fd_in[1], body, strlen(body));
+				close (_fd_in[1]);
+			}	
+			auto corrent = std::chrono::high_resolution_clock::now();
+			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(corrent - start);
+			if (duration.count() > MAX_TIME)
+			{
+				kill(pid, SIGKILL);
+				break ;
+			}
 		}
+		if (allEventsProcessed())
+			break ;
 	}
 	close(kque);
 	//write(_fd_in[1], body, strlen(body));
