@@ -61,6 +61,7 @@ int main()
 
     Request request3;
     request3.feed("GET /Users/dmonfrin/Desktop/webservbranch/upload.py HTTP/1.1\n");
+
     request3.feed("User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\r\nHost: www.tutorialspoint.com\r\nContent-Lenght: 30\r\n");
     std::cout<<"method num: " << request3.get_method() << std::endl; 
     std::cout << "address: " << request3.get_uri() << std::endl;

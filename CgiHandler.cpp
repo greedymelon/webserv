@@ -78,6 +78,8 @@ void CgiHandler::parent_exe(const char *body, pid_t pid)
 			if (duration.count() > MAX_TIME)
 			{
 				kill(pid, SIGKILL);
+				read_finished = 1;
+				write_finished = 1;
 				break ;
 			}
 		}

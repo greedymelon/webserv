@@ -5,13 +5,15 @@ import cgitb; cgitb.enable()
 import os
 import random
 import string
+import time
 
+//time.sleep(30)
 print("Content-type:text/html\r\n\r\n")
 if not os.path.exists("images"):
     os.makedirs("images")
-dir_path = os.environ['DOCUMENT_ROOT'] + "/images/"
+#dir_path = os.environ['DOCUMENT_ROOT'] + "/images/"
 #test script without server
-#dir_path = os.environ['DOCUMENT_ROOT'] + "images/"
+dir_path = os.environ['DOCUMENT_ROOT'] + "images/"
 files = os.listdir(dir_path)
 form = cgi.FieldStorage()
 base_begin = """
