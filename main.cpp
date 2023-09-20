@@ -60,20 +60,22 @@ int main()
     }
 
     Request request3;
-    request3.feed("GET /mnt/c/Users/dmonf/OneDrive/Desktop/school/neW_webser/upload.py HTTP/1.1\n");
+    request3.feed("GET /Users/dmonfrin/Desktop/webservbranch/upload.py HTTP/1.1\n");
     request3.feed("User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\r\nHost: www.tutorialspoint.com\r\nContent-Lenght: 30\r\n");
     std::cout<<"method num: " << request3.get_method() << std::endl; 
     std::cout << "address: " << request3.get_uri() << std::endl;
     std::cout<<"is sgi: " << request3.is_cgi()<< std::endl;  
     request3.create_env();
     std::cout<<"env: "  << std::endl;
-    char *const *env =  request3.get_env();
+    //char *const *env =  request3.get_env();
     // for (int i =0; i < 32; i++)
     // {
     //         std::cout << env[i] << std::endl;
     // }
-    std::cout<< request3.get_script_addr() << request3.get_env() << std::endl;
+    std::cout<< request3.get_script_addr() << std::endl;
 
     CgiHandler cgi(request3.get_script_addr(), request3.get_env(), "delete=11111.jpeg");
+
     std::cout << cgi.get_response();
+    std::cout << cgi.get_response_num();
 }

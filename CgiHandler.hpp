@@ -9,9 +9,7 @@ class CgiHandler
     private:
         int _fd_in[2];
         int _fd_out[2];
-        int _fd_err[2];
         int _response_num;
-        pid_t _child_id;
         std::string _response;
         std::string _response_err;
         std::string _err;

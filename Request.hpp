@@ -7,59 +7,60 @@
 
 class Request
 {
-    
-        private:
-            bool    _is_header_finish;
-            bool    _is_first_line;
-            std::string _buffer;
-            std::string _last_key;
+	private:
 
-            std::string _method;
-            bool        _is_cgi;
-            char        **_env;
+		bool    _is_header_finish;
+		bool    _is_first_line;
+		std::string _buffer;
+		std::string _last_key;
 
-        
-            std::map<std::string, std::string> _header;
-            std::string _query_string;
-            unsigned int     _max_body_size;
-            std::string _uri;
-            std::string _script_name;
-            std::string _protocol;
-            std::string _body;
+		std::string _method;
+		bool        _is_cgi;
+		char        **_env;
 
-            int set_MetAddProt(void);
-            int parse_protocol(void);
-            void set_map(void);
-            int set_body(void);
-            
-            
-        public:
-            Request(void);
-		    ~Request( void );
-            int         feed(const char* chunk);
-            std::string get_uri(void) const;
-            std::string get_info(std::string key) const;
-            bool        is_info_present(std::string key) const;
-            int         get_method(void) const;
-            std::string get_protocol(void) const;
-            const char  *get_body(void) const;
-            size_t      get_bodySize(void) const;
-            void        create_env(void);
+	
+		std::map<std::string, std::string> _header;
+		std::string _query_string;
+		unsigned int     _max_body_size;
+		std::string _uri;
+		std::string _script_name;
+		std::string _protocol;
+		std::string _body;
 
-            char *const *get_env(void) const;
-            bool        is_cgi(void) const;
-            const char *get_script_addr(void) const;
+		int set_MetAddProt(void);
+		int parse_protocol(void);
+		void set_map(void);
+		int set_body(void);
+		
+		
+	public:
+
+		Request(void);
+		~Request( void );
+		int         feed(const char* chunk);
+		std::string get_uri(void) const;
+		std::string get_info(std::string key) const;
+		bool        is_info_present(std::string key) const;
+		int         get_method(void) const;
+		std::string get_protocol(void) const;
+		const char  *get_body(void) const;
+		size_t      get_bodySize(void) const;
+		void        create_env(void);
+
+		char *const *get_env(void) const;
+		bool        is_cgi(void) const;
+		const char *get_script_addr(void) const;
 
 };
 
 
 typedef enum e_request_type
 {
-    GET,
-    POST,
-    DELETE,
-    METHOD_NOT_ALLOW = 405,
-    WRONG_PROTOCOL = 505,
+	GET,
+	POST,
+	DELETE,
+	METHOD_NOT_ALLOW = 405,
+	WRONG_PROTOCOL = 505,
 } t_request_type;
 
 #endif

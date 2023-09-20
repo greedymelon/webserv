@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/Python
 
 import cgi
 import cgitb; cgitb.enable()
@@ -6,7 +6,7 @@ import os
 import random
 import string
 
-print("Content-type:text/html\r\n\r\n", end="")
+print("Content-type:text/html\r\n\r\n")
 if not os.path.exists("images"):
     os.makedirs("images")
 dir_path = os.environ['DOCUMENT_ROOT'] + "/images/"
