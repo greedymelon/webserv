@@ -55,7 +55,7 @@ void CgiHandler::parent_exe(const char *body, pid_t pid)
 	int read_finished = 0;
 	int write_finished = 0;
 	char buffer[200];
-	memset(buffer, '\0', 100);
+	memset(buffer, '\0', 200);
 	kevent(kque, NULL, 0, event, 2, NULL);
 	while (1)
 	{
@@ -66,6 +66,7 @@ void CgiHandler::parent_exe(const char *body, pid_t pid)
 				if (read(_fd_out[0], buffer, 200) < 1)
 					read_finished++;
 				_response.append(buffer);
+				memset(buffer, '\0', 200);
 			}
 			if(event[i].filter == EVFILT_WRITE)
 			{
@@ -74,8 +75,8 @@ void CgiHandler::parent_exe(const char *body, pid_t pid)
 				close (_fd_in[1]);
 			}	
 			auto corrent = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(corrent - start);
-			if (duration.count() > MAX_TIME)
+			std::chrono::milliseconds time_passed = std::chrono::duration_cast<std::chrono::milliseconds>(corrent - start);
+			if (time_passed.count() > MAX_TIME)
 			{
 				kill(pid, SIGKILL);
 				read_finished = 1;
@@ -94,21 +95,24 @@ void CgiHandler::parent_exe(const char *body, pid_t pid)
 
 	int status;
 	wait(&status);
-	if (status)
+	switch(pid) 
 	{
-		if (status == 137)
-		{
-			_response_num = 137;
-			_err = "child was killed";
-		}
-		else
-		{
-			_response_num = 500;
-			_err = strerror(status);
-		}
+		case 137:
+			_status_code = 504;
+			_status_mess = "504 Gateway Time-out";
+			break ;
+		case 3328:
+			_status_code = 403;
+			_status_mess = "403 Forbidden";
+			break ;
+		case 0:
+			_status_code = 200;
+			_status_mess = "success";
+			break ;
+		default:
+			_status_code = 502;
+			_status_mess = "Bad Gateway";
 	}
-	else
-		_response_num = 200;
 }
 
 void CgiHandler::child_exe(const char *script, char * const *env)
@@ -141,30 +145,30 @@ int CgiHandler::initialize_pipe (void)
 {
 	if (pipe(_fd_in) < 0)
 	{
-		_response_num = 500;
-		_err = "Pipe failed";
+		_status_code = 500;
+		_status_mess = "Pipe failed";
 		return -1;
 	}
 	if( pipe(_fd_out) < 0)
 	{
 		st_close_fd(_fd_in[0], _fd_in[1]);
-		_response_num = 500;
-		_err = "Pipe failed";
+		_status_code = 500;
+		_status_mess = "Pipe failed";
 		return -1;
 	}
 	return 0;
 }
 
-std::string  CgiHandler::get_error (void) const
+std::string  CgiHandler::get_status_mess ( void ) const
 {
-	return _err;
+	return _status_mess;
 }
-int CgiHandler::get_response_num() const
+int CgiHandler::get_status_code( void ) const
 {
-	return _response_num;
+	return _status_code;
 } 
 
-std::string CgiHandler::get_response() const
+std::string CgiHandler::get_response( void ) const
 {
 	return _response;
 }

@@ -32,6 +32,11 @@ class Request
 		void set_map(void);
 		int set_body(void);
 		
+		size_t      get_bodySize(void) const;
+		void        create_env(void);
+		bool        is_info_present(std::string key) const;
+		std::string get_info(std::string key) const;
+		std::string get_protocol(void) const;
 		
 	public:
 
@@ -39,14 +44,8 @@ class Request
 		~Request( void );
 		int         feed(const char* chunk);
 		std::string get_uri(void) const;
-		std::string get_info(std::string key) const;
-		bool        is_info_present(std::string key) const;
 		int         get_method(void) const;
-		std::string get_protocol(void) const;
 		const char  *get_body(void) const;
-		size_t      get_bodySize(void) const;
-		void        create_env(void);
-
 		char *const *get_env(void) const;
 		bool        is_cgi(void) const;
 		const char *get_script_addr(void) const;

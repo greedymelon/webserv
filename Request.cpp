@@ -257,6 +257,7 @@ void Request::create_env(void)
 
 char *const *Request::get_env(void) const
 {
+	create_env();
 	return (_env);
 }
 
