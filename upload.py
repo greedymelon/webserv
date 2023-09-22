@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/Python
 
 import cgi
 import cgitb; cgitb.enable()
@@ -7,7 +7,7 @@ import random
 import string
 import errno
 
-print("Content-type:text/html\r\n\r\n", end="")
+print("Content-type:text/html\r\n\r\n")
 
 dir_path = "/var/www/images/"
 files = os.listdir(dir_path)
