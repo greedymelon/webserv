@@ -10,7 +10,7 @@
 #include <time.h>
 #include <chrono>
 #include <iostream>
-#define MAX_TIME 20000
+#define MAX_TIME 60000
 
 static void st_close_fd(int fd_1, int fd_2)
 {
@@ -29,8 +29,8 @@ CgiHandler::CgiHandler(const char *script, char * const *env, const char *body)
 	int pid = fork();
 	switch(pid) {
 		case -1:
-			_response_num = 500;
-			_err = strerror(errno);
+			_status_code = 500;
+			_status_mess = strerror(errno);
 			break ;
 		case 0:
 			child_exe(script, env);
@@ -43,24 +43,28 @@ CgiHandler::CgiHandler(const char *script, char * const *env, const char *body)
 
 void CgiHandler::parent_exe(const char *body, pid_t pid)
 {
+	int kque = kqueue();
 	struct kevent event[2];
 	EV_SET(&event[0], _fd_in[1], EVFILT_WRITE, EV_ADD, 0, 0, NULL);
 	EV_SET(&event[1], _fd_out[0], EVFILT_READ, EV_ADD, 0, 0, NULL);
-
-
-	int kque = kqueue();
 	kevent(kque, event, 2, NULL, 0, NULL);
+
 	auto start = std::chrono::high_resolution_clock::now();
 	st_close_fd(_fd_in[0], _fd_out[1]);
 	int read_finished = 0;
 	int write_finished = 0;
+
+	struct timespec timeout;
+    timeout.tv_sec = 0;
+    timeout.tv_nsec = 0;
+
 	char buffer[200];
 	memset(buffer, '\0', 200);
-	kevent(kque, NULL, 0, event, 2, NULL);
 	while (1)
 	{
-		for (int i = 0; i < 2; i++) 
-		{
+		int num_events = kevent(kque, NULL, 0, event, 2, &timeout);
+		for (int i = 0; i < num_events; i++) 
+		{ 
 			if (event[i].filter == EVFILT_READ)
 			{
 				if (read(_fd_out[0], buffer, 200) < 1)
@@ -71,18 +75,16 @@ void CgiHandler::parent_exe(const char *body, pid_t pid)
 			if(event[i].filter == EVFILT_WRITE)
 			{
 				write(_fd_in[1], body, strlen(body));
-				write_finished++;
 				close (_fd_in[1]);
+				write_finished++;
 			}	
-			auto corrent = std::chrono::high_resolution_clock::now();
-			std::chrono::milliseconds time_passed = std::chrono::duration_cast<std::chrono::milliseconds>(corrent - start);
-			if (time_passed.count() > MAX_TIME)
-			{
-				kill(pid, SIGKILL);
-				read_finished = 1;
-				write_finished = 1;
-				break ;
-			}
+		}
+		auto corrent = std::chrono::high_resolution_clock::now();
+		std::chrono::milliseconds time_passed = std::chrono::duration_cast<std::chrono::milliseconds>(corrent - start);
+		if (time_passed.count() > MAX_TIME)
+		{
+			kill(pid, SIGKILL);
+			break ;
 		}
 		if (read_finished && write_finished)
 			break ;
@@ -94,8 +96,8 @@ void CgiHandler::parent_exe(const char *body, pid_t pid)
 	close (_fd_out[0]);
 
 	int status;
-	wait(&status);
-	switch(pid) 
+	waitpid(pid, &status, 0);
+	switch(status) 
 	{
 		case 137:
 			_status_code = 504;
@@ -149,6 +151,8 @@ int CgiHandler::initialize_pipe (void)
 		_status_mess = "Pipe failed";
 		return -1;
 	}
+	fcntl(_fd_in[0], F_SETFL, O_NONBLOCK);
+	fcntl(_fd_in[1], F_SETFL, O_NONBLOCK);
 	if( pipe(_fd_out) < 0)
 	{
 		st_close_fd(_fd_in[0], _fd_in[1]);
@@ -156,6 +160,8 @@ int CgiHandler::initialize_pipe (void)
 		_status_mess = "Pipe failed";
 		return -1;
 	}
+	fcntl(_fd_out[0], F_SETFL, O_NONBLOCK);
+	fcntl(_fd_out[1], F_SETFL, O_NONBLOCK);
 	return 0;
 }
 

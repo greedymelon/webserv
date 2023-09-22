@@ -256,8 +256,7 @@ void Request::create_env(void)
 }
 
 char *const *Request::get_env(void) const
-{
-	create_env();
+{	
 	return (_env);
 }
 
@@ -269,4 +268,14 @@ bool Request::is_cgi(void) const
 const char *Request::get_script_addr(void) const
 {
 	return _script_name.c_str();
+}
+
+int	Request::is_complete_request(void)
+{
+	if (_is_header_finish && _is_first_line)
+	{
+		create_env();
+		return 0;
+	}
+	return 400;
 }
