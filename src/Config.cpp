@@ -1,5 +1,5 @@
-#include "Config.hpp"
-#include "CheckConfig.hpp"
+#include "../inc/Config.hpp"
+#include "../inc/CheckConfig.hpp"
 
 Config::Config(const std::string &path) :_path(path) {
 	try {

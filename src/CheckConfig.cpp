@@ -1,4 +1,4 @@
-#include "CheckConfig.hpp"
+#include "../inc/CheckConfig.hpp"
 
 CheckConfig::~CheckConfig() {}
 
