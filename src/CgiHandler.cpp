@@ -1,4 +1,4 @@
-#include "CgiHandler.hpp"
+#include "../inc/CgiHandler.hpp"
 #include <cstring>
 #include <sys/types.h>
 #include <sys/wait.h>

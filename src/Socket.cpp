@@ -1,4 +1,4 @@
-#include "Socket.hpp"
+#include "../inc/Socket.hpp"
 
 Socket::Socket(std::string port) : _port(port) {}
 
