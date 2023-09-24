@@ -13,7 +13,7 @@
 # define CYAN "\033[0;36m"
 # define RESET "\033[0m"
 
-#define SIZE 65555555
+#define BODY_SIZE 65555555
 
 std::string getTime();
 

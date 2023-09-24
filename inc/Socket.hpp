@@ -9,8 +9,11 @@
 # include <sys/event.h>
 # include <sys/socket.h>
 # include <unistd.h>
+
 # include "Config.hpp"
 # include "Utils.hpp"
+
+# define SIZE 65536		//64KB
 
 class Socket {
 private:
@@ -34,14 +37,14 @@ public:
 	class SocketCreateError : public std::exception {
 		public:
 			const char* what() const throw() {
-				return "ERROR Socket()!";
+				return "ERROR : Socket()";
 			}
 	};
 
 	class AcceptError : public std::exception {
 		public:
 			const char* what() const throw() {
-				return "ERROR Accept()!";
+				return "ERROR : Accept()";
 			}
 	};
 

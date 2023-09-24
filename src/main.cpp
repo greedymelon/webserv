@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 		filePath = argv[1];
     }
 	Config conf(filePath);
-	conf.display();
-	// Server(conf).start();
+	// conf.display();
+	Server(conf).start();
 	return (EXIT_SUCCESS);
 }
