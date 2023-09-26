@@ -15,7 +15,6 @@ class Request
 		std::string _last_key;
 
 		std::string _method;
-		bool		_is_cgi;
 		char        **_env;
 
 	
@@ -24,7 +23,7 @@ class Request
 		std::string		_query_string;
 		unsigned int	_max_body_size;
 		std::string		_uri;
-		std::string		_script_name;
+		std::string		_file_name;
 		std::string		_protocol;
 		std::string		_body;
 
@@ -41,17 +40,17 @@ class Request
 		
 	public:
 
-		Request(void);
+		Request( unsigned int MaxBody );
 		~Request( void );
 
-		int			feed(const char* chunk);
-		int			is_complete_request(void);
-		std::string	get_uri(void) const;
-		int			get_method(void) const;
-		const char	*get_body(void) const;
-		char *const	*get_env(void) const;
-		bool		is_cgi(void) const;
-		const char *get_script_addr(void) const;
+		int			feed( const char* chunk );
+		int			is_complete_request( void );
+		std::string	get_uri( void ) const;
+		int			get_method( void ) const;
+		const char	*get_body( void ) const;
+		char *const	*get_env( void ) const;
+		const char	*get_dir( void ) const;
+		std::string	get_file_addr( void ) const;
 
 };
 

@@ -101,19 +101,19 @@ void CgiHandler::parent_exe(const char *body, pid_t pid)
 	{
 		case 137:
 			_status_code = 504;
-			_status_mess = "504 Gateway Time-out";
+			_status_mess = "HTTP/1.1 504 Gateway Time-out\r\n";
 			break ;
 		case 3328:
 			_status_code = 403;
-			_status_mess = "403 Forbidden";
+			_status_mess = "HTTP/1.1 403 Forbidden\r\n";
 			break ;
 		case 0:
 			_status_code = 200;
-			_status_mess = "success";
+			_status_mess = "HTTP/1.1 200 OK\r\n";
 			break ;
 		default:
 			_status_code = 502;
-			_status_mess = "Bad Gateway";
+			_status_mess = "HTTP/1.1 502 Bad Gateway\r\n";
 	}
 }
 

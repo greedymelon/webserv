@@ -1,4 +1,4 @@
-#include "Request.hpp"
+#include "../inc/Request.hpp"
 #include <string.h>
 #include <stdlib.h>
 
@@ -38,7 +38,7 @@
 //     "WINDIR="
 // };
 
-Request::Request(void): _is_header_finish(0), _is_first_line(0),_env(NULL), _max_body_size(0){}
+Request::Request( unsigned int MaxBody ): _is_header_finish(0), _is_first_line(0),_env(NULL), _max_body_size(MaxBody){}
 Request::~Request(void){
 	if (_env == NULL)
 		return ;
@@ -90,13 +90,12 @@ int  Request::set_MetAddProt(void)
 	_buffer.erase(0, _buffer.find_first_of(' ') + 1);
 	std::cout << _buffer<< std::endl << std::endl;
 	_uri = _buffer.substr(0, _buffer.find_first_of(' '));
-	_script_name = _uri;
+	_file_name = _uri;
 	_query_string = "";
-	_is_cgi = true;
 	if (_uri.find('?') != std::string::npos)
 	{
 		_query_string = _uri.substr(_uri.find('?'), _uri.length());
-		_script_name = _uri.substr(0, _uri.find('?'));
+		_file_name = _uri.substr(0, _uri.find('?'));
 	}
 	_buffer.erase(0, _buffer.find_first_of(' ') + 1);
 	return parse_protocol();
@@ -104,7 +103,7 @@ int  Request::set_MetAddProt(void)
 
 void Request::set_map(void)
 {
-		_is_header_finish = 0;
+	_is_header_finish = 0;
 	// check if there some value in the string
 	if (_buffer.find_first_of('\n') == std::string::npos)
 		return ;
@@ -149,13 +148,10 @@ int Request::feed(const char *chunk)
 		result = set_MetAddProt();
 	if (_is_first_line && !_is_header_finish && !result)
 		set_map();
-	if (_is_header_finish && _max_body_size == 0)
+	if (_is_header_finish)
 	{   
-		_max_body_size = 66666666;
 		if (_header.find("Transfer-Encoding") == _header.end())
 		{ 
-			if (_header.find("Content-Lenght") == _header.end() || stoi(_header["Content-Lenght"]) < 0 )
-				return (401);
 			else if (_max_body_size > unsigned(stoi(_header["Content-Lenght"])))
 				_max_body_size = stoi(_header["Content-Lenght"]); 
 		}
@@ -242,7 +238,7 @@ void Request::create_env(void)
 	_env[18] = joing_string("REQUEST_METHOD=", _method.c_str());
 	_env[19] = joing_string("REQUEST_URI=", _uri.c_str());
 	_env[20] = joing_string("SCRIPT_FILENAME=","DOCUMENT_ROOT+filename");
-	_env[21] = joing_string("SCRIPT_NAME=",_script_name.c_str());
+	_env[21] = joing_string("SCRIPT_NAME=",_file_name.c_str());
 	_env[22] = joing_string("SERVER_ADDR=","");
 	_env[23] = joing_string("SERVER_ADMIN=","");
 	_env[24] = joing_string("SERVER_NAME=","");
@@ -260,14 +256,9 @@ char *const *Request::get_env(void) const
 	return (_env);
 }
 
-bool Request::is_cgi(void) const
+std::string Request::get_file_addr(void) const
 {
-	return _is_cgi;
-}
-
-const char *Request::get_script_addr(void) const
-{
-	return _script_name.c_str();
+	return _file_name;
 }
 
 int	Request::is_complete_request(void)
@@ -278,4 +269,9 @@ int	Request::is_complete_request(void)
 		return 0;
 	}
 	return 400;
+}
+
+const char	*Request::get_dir( void ) const
+{
+	return _uri.substring(0, _uri.find_last_of("/")).cstr();
 }
