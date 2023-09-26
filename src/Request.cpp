@@ -273,5 +273,5 @@ int	Request::is_complete_request(void)
 
 const char	*Request::get_dir( void ) const
 {
-	return _uri.substring(0, _uri.find_last_of("/")).cstr();
+	return _uri.substring(0, _uri.find_last_of("/") + 1).cstr();
 }
