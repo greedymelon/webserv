@@ -77,6 +77,9 @@ int main()
 	response.append(read_file(file_path));
 }
 
+// this function can be oveloaded: std::string	read_file (int error_page)
+// and in case we have to access our default error page ex: the error page provided have no rights or
+// they don't exist and use the standard one
 std::string	read_file (std::string file_path)
 {
 	std::string response;
