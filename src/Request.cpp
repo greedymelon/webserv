@@ -62,7 +62,7 @@ int st_check_method(std::string method)
 int Request::set_body(void)
 {
 	if (_method.compare("GET") == 0)
-		return (400);
+		return 0;
 	_body.append(_buffer);
 	_buffer.clear();
 	if (_body.size() > _max_body_size)
