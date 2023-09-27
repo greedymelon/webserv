@@ -1,8 +1,11 @@
 #include "inc/Request.hpp"
 #include "inc/CgiHandler.hpp"
 #include <iostream>
+#include <fstream>
+#include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/event.h>
 #define MAX_BODY_SIZE 1000
 
 int main()
@@ -48,4 +51,64 @@ int main()
 		toClient = cgi.get_status_mess() + cgi.get_response(); // 200
 		break;
 	}
+
+	// in case is not cgi check if exist and if reading permission are there
+	std::string response;
+	if (access(file_path.c_str(), R_OK))
+	{	
+		response = "HTTP/1.1 200 OK\r\n";
+	}
+	else if (access(file_path.c_str(), F_OK))
+	{	
+		response = "HTTP/1.1 404 NOT FOUND\r\n";
+		file_path = "404.html";
+	}
+	else
+	{
+		response = "HTTP/1.1 403 Forbidden\r\n";
+		file_path = "403.html";
+	}
+	//for reading from a file
+	response.append(read_file(file_path));
+}
+
+std::string	read_file (std::string file_path)
+{
+	std::string response;
+	std:: string ext =  file_path.substr(file_path.find_last_of("."),file_path.size());
+	if (ext == ".png")
+		response = "Content-type:png\r\n\r\n";
+	else if (ext == ".jpeg")
+		response = "Content-type:jpeg\r\n\r\n";
+	else if (ext == ".css")
+		response = "Content-type:stylesheet\r\n\r\n";
+	else
+		response = "Content-type:text/html\r\n\r\n";
+	std::ifstream my_file (file_path.c_str());
+	fcntl(my_file, F_SETFL, O_NONBLOCK);
+	int kque = kqueue();
+	struct kevent event;
+	EV_SET(&event, my_file, EVFILT_READ, EV_ADD, 0, 0, NULL);
+	int read_finished == 0;
+	while (1)
+	{
+		int num_events = kevent(kque, NULL, 0, event, 1, &timeout);
+		for (int i = 0; i < num_events; i++) 
+		{ 
+			if (event[i].filter == EVFILT_READ)
+			{
+				if (my_file.eof())
+				{	
+					my_file.close();
+					read_finished++;
+					break ;
+				}
+				_response.append(my_file.rdbuf());
+			}
+		}
+		if (read_finished)
+			break ;
+	}
+	close(kque);
+	return response;
 }

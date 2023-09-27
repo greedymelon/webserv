@@ -219,7 +219,7 @@ void Request::create_env(void)
 	_env[32] = NULL;
 	_env[0] = joing_string("COMSPEC=","");
 	_env[1] = joing_string("DOCUMENT_ROOT=","");
-	_env[2] = joing_string("GATEWAY_INTERFACE=","");
+	_env[2] = joing_string("GATEWAY_INTERFACE=", "CGI/1.1");
 	_env[3] = joing_string("HOME=","");
 	_env[4] = joing_string("HTTP_ACCEPT=","");
 	_env[5] = joing_string("HTTP_ACCEPT_CHARSET=","");
