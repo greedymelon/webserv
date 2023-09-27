@@ -13,46 +13,50 @@ int main()
 	// first we need to create a request
 	Request request(MAX_BODY_SIZE);
 
-	//than we feed our request with a char *
-	// the request request return 0 if evertythin is write or the error
-	// that corrispond to the server error in case enconter an error
+	// then we feed our request with a char *
+	// the request return 0 if evertything is right or the error
+	// that corresponds to the server error
 	int error;
 	error = request.feed("POST /hello.htm HTTP/1.1\n");
 
 	//check if the request is finished
 	std::cout << request.is_complete_request();
-	//retrive usefull information
+	
 
-	//check the config file if the dir is there:
+	// we have to check with the result of the function if the DIR is in the config:
 	request.get_dir();
-	//check if the method is allow
+	// if the dir is in the conf, we check if the method is allowed
 	request.get_method();
-	// then we would have to join the document root (ex in the conf: root www;) with the file requested also if it is a script
-	// es: root.append(request.get_file_addr()) 
+	
+	// then we would have to join the document root (ex in the conf: root www;) with the file requested, also if it is a script
 	std::string file_path;
 	file_path.append("ROOT_COMING_FROM_CONF");
 	file_path.append(request.get_file_addr());
-	//check if it is cgi and then run
+	
+	// check if it is a cgi in the config and then run
 	CgiHandler cgi(file_path.c_str(), request.get_env(), request.get_body());
+	
+	// get our response
 	std::string toClient;
-	//check what is the exit code
+	
+	// check what is the exit code of the cgi
 	switch (cgi.get_status_code())
 	{
 	case 403:
-		toClient = cgi.get_status_mess() + "Content-type:text/html\r\n\r\n" + "FILE_CONTENT";
+		toClient = cgi.get_status_mess() + "Content-type:text/html\r\n\r\n" + "403.html_CONTENT";
 		break;
 	case 502:
-		toClient = cgi.get_status_mess() + "Content-type:text/html\r\n\r\n" + "FILE_CONTENT";
+		toClient = cgi.get_status_mess() + "Content-type:text/html\r\n\r\n" + "502.html_CONTENT";
 		break;
 	case 504:
-		toClient = cgi.get_status_mess() + "Content-type:text/html\r\n\r\n" + "FILE_CONTENT";
+		toClient = cgi.get_status_mess() + "Content-type:text/html\r\n\r\n" + "504.html_CONTENT";
 		break;	
 	default:
 		toClient = cgi.get_status_mess() + cgi.get_response(); // 200
 		break;
 	}
 
-	// in case is not cgi check if exist and if reading permission are there
+	// in case it is not a cgi, check if file exists and if reading permissions are there
 	std::string response;
 	if (access(file_path.c_str(), R_OK))
 	{	
@@ -61,14 +65,15 @@ int main()
 	else if (access(file_path.c_str(), F_OK))
 	{	
 		response = "HTTP/1.1 404 NOT FOUND\r\n";
-		file_path = "404.html";
+		file_path = "www/404.html";
 	}
 	else
 	{
 		response = "HTTP/1.1 403 Forbidden\r\n";
-		file_path = "403.html";
+		file_path = "www/403.html";
 	}
-	//for reading from a file
+	
+	// for reading from a file
 	response.append(read_file(file_path));
 }
 
