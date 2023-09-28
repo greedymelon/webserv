@@ -66,7 +66,7 @@ int Request::set_body(void)
 	_body.append(_buffer);
 	_buffer.clear();
 	if (_body.size() > _max_body_size)
-		return (400);
+		return (413);
 	return 0;
 }
 
